@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 
 import 'slidable.dart';
 
@@ -72,22 +72,54 @@ class CustomSlidableAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveForegroundColor = foregroundColor ??
-        (ThemeData.estimateBrightnessForColor(backgroundColor) ==
-                Brightness.light
+        (FluentTheme.of(context).brightness == Brightness.light
             ? Colors.black
             : Colors.white);
+    // final effectiveForegroundColor = foregroundColor ??
+    //     (FluentTheme.estimateBrightnessForColor(backgroundColor) ==
+    //             Brightness.light
+    //         ? Colors.black
+    //         : Colors.white);
 
     return Expanded(
       flex: flex,
       child: SizedBox.expand(
         child: OutlinedButton(
           onPressed: () => _handleTap(context),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: backgroundColor,
-            primary: effectiveForegroundColor,
-            onSurface: effectiveForegroundColor,
-            shape: const RoundedRectangleBorder(),
-            side: BorderSide.none,
+          style: ButtonStyle(
+            backgroundColor: ButtonState.resolveWith(
+              (states) {
+                if (states.isPressing) {
+                  return backgroundColor;
+                }
+                if (states.isHovering) {
+                  return backgroundColor;
+                }
+                return backgroundColor;
+              },
+            ),
+            foregroundColor: ButtonState.resolveWith(
+              (states) {
+                if (states.isPressing) {
+                  return effectiveForegroundColor;
+                }
+                if (states.isHovering) {
+                  return effectiveForegroundColor;
+                }
+                return effectiveForegroundColor;
+              },
+            ),
+            shape: ButtonState.resolveWith(
+              (states) {
+                if (states.isPressing) {
+                  return const RoundedRectangleBorder();
+                }
+                if (states.isHovering) {
+                  return const RoundedRectangleBorder();
+                }
+                return const RoundedRectangleBorder();
+              },
+            ),
           ),
           child: child,
         ),
@@ -143,7 +175,7 @@ class SlidableAction extends StatelessWidget {
   final SlidableActionCallback? onPressed;
 
   /// An icon to display above the [label].
-  final IconData? icon;
+  final Icon? icon;
 
   /// The space between [icon] and [label] if both set.
   ///
@@ -159,7 +191,7 @@ class SlidableAction extends StatelessWidget {
 
     if (icon != null) {
       children.add(
-        Icon(icon),
+        icon!,
       );
     }
 
